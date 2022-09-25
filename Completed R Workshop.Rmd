@@ -1,0 +1,84 @@
+```{r}
+# print out the phrase hello world
+print("Hello world!")
+```
+
+```{r}
+# Install tidyverse package
+install.packages("tidyverse")
+# Load in tidyverse
+library(tidyverse)
+
+# If the above code does not run, uncomment out the below lines of code
+# remove.packages("rlang")
+# install.packages("rlang")
+# library(tidyverse)
+```
+
+```{r}
+# Load in data
+teams <- read_csv("Teams.csv")
+# Subset data for years between 2000 and 2019 
+new_teams <- teams %>% filter(yearID >= 2000  & yearID <= 2019)
+
+# Create new variables measuring winning percentage and run differential
+new_teams$win_pct <- new_teams$W / new_teams$G
+new_teams$run_diff <- new_teams$R - new_teams$RA
+
+# Get summary statistics of variables
+summary(new_teams$win_pct)
+summary(new_teams$run_diff)
+
+# Calculate standard deviations of variables
+sd(new_teams$win_pct)
+sd(new_teams$run_diff)
+
+# Create simple histograms of variables
+hist(new_teams$win_pct)
+hist(new_teams$run_diff)
+
+# Change number of bins in the histogram, add axis labels, add a title, and change color
+hist(new_teams$win_pct, breaks = 20, xlab = "Winning Percentage", ylab = "Number of teams", 
+     main = "Distribution of Winning Percentages from 2000 to 2019", col = "lightblue")
+hist(new_teams$run_diff, breaks = 20, xlab = "Run differential", ylab = "Number of teams", 
+     main = "Distribution of Run Differential from 2000 to 2019", col = "lightgreen")
+
+# Create a scatterplot of winning percentage vs run differential
+plot(new_teams$run_diff, new_teams$win_pct, xlab = "Run differential", 
+     ylab = "Winning Percentage", main = "Relationship between Run differential and Winning Percentage")
+
+# Calculate the correlation between run differential and winning percentage
+cor(new_teams$run_diff, new_teams$win_pct)
+```
+
+
+
+
+```{r}
+
+# Calculate line of best fit
+model <- lm(win_pct ~ run_diff, data=new_teams)
+print("Coefficients:")
+model
+print("Full Summary")
+summary(model)
+
+# Plot winning percentage vs. run differential with line of best fit
+plot(new_teams$run_diff, new_teams$win_pct, xlab = "Run differential", 
+     ylab = "Winning Percentage", main = "Relationship between Run differential and Winning Percentage")
+abline(model, col = "red", lty=2)
+
+
+
+# Show coefficient on run differential
+model$coefficients[2]
+
+# Calculate wins per run 
+model$coefficients[2] * 162
+
+# Calculate runs per win
+1 / (model$coefficients[2] * 162)
+
+```
+
+
